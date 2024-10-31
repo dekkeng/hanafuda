@@ -30,8 +30,8 @@ nano prvkey.txt
 ```
 **Edit rtoken.txt and input Refresh token from instruction below**
 ```bash
-cp prvkey.txt.sample prvkey.txt
-nano prvkey.txt
+cp rtoken.txt.sample rtoken.txt
+nano rtoken.txt
 ```
 run the script
 ```bash
