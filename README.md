@@ -1,8 +1,5 @@
 # Auto Deposit ETH for HANA Network / Auto Grow and Open Garden 
 
-<img width="513" alt="image" src="image.png">
-
-
 ## Description
 **Support Multi Account**
 - Register here : https://hanafuda.hana.network/dashboard
