@@ -151,10 +151,16 @@ async def main(mode, num_transactions=None):
                 num_transactions = int(input("Enter the number of transactions to be executed: "))
             await handle_eth_transactions(session, num_transactions)
         elif mode == '2':
-            while True:  
+            while True:
+                
                 for refresh_token in access_tokens:
-                    await handle_grow_and_garden(session, refresh_token)  
-                print(f"All accounts have been processed. Cooling down for 10 minutes...")
+                    try:
+                        await handle_grow_and_garden(session, refresh_token)  
+                    except Exception as e:
+                        print(f"Error grow: {str(e)}")
+                        
+                    print(f"All accounts have been processed. Cooling down for 10 minutes...")
+                    
                 time.sleep(GROW_INTERVAL)  
         else:
             print("Invalid option. Please choose either 1 or 2.")
