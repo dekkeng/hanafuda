@@ -49,7 +49,7 @@ async def colay(session, url, method, payload_data=None):
         return await response.json()
 
 async def refresh_access_token(session, refresh_token):
-    api_key = "AIzaSyCC8e8q8StOo6FyHaOigaNFrHyEOQyNHY0"  
+    api_key = "AIzaSyDipzN0VRfTPnMGhQ5PSzO27Cxm3DohJGY"  
     async with session.post(
         f'https://securetoken.googleapis.com/v1/token?key={api_key}',
         headers={"Content-Type": "application/x-www-form-urlencoded"},
