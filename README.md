@@ -56,8 +56,8 @@ python main.py -a 2
 - Find Application and choose session storage
 - Select hana and copy your refreshToken
 ![image](image-2.png)
-- Copy token.txt.sample to token.txt 
-- Edit token.txt paste your refresh token
+- Copy rtoken.txt.sample to rtoken.txt 
+- Edit rtoken.txt paste your refresh token
 
 ## Optinally you can use pm2 to run script in the background
 You can use pm2 to run your script in the background, allowing it to continue running even after you close your terminal.
