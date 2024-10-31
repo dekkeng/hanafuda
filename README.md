@@ -35,19 +35,19 @@ nano rtoken.txt
 ```
 run the script
 ```bash
-python main.py
+python3 main.py
 ```
 
 **choose 1 to do transactions**
 or use shortcut command (change 1000 to amount of tx you need)
 ```bash
-python main.py -a 1 -tx 1000
+python3 main.py -a 1 -tx 1000
 ```
 
 **choose 2 to run grow and open garden boxes**
 or use shortcut command
 ```bash
-python main.py -a 2
+python3 main.py -a 2
 ```
 
 **How To Get Your Refresh Token**
