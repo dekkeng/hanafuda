@@ -9,7 +9,7 @@
 - Regist with Google
 - Submit Code
   ```
-  KA4OTC
+  LCFUVA
   ```
 - Deposit $1 to ETH BASE, just not too much.
 - Make 5,000 transactions to earn 300/hour (to unlock cards and get points).
@@ -19,36 +19,48 @@
 
 ## Instalation
 ```bash
-git clone https://github.com/Zlkcyber/hanafuda.git
+git clone https://github.com/dekkeng/hanafuda.git
 cd hanafuda
 ```
 install the packages
 ```bash
 pip install -r requirements.txt
 ```
-**Edit pvkey.txt and input Private Key**
+**Edit prvkey.txt and input Private Key**
 ```bash
-nano pvkey.txt
+cp prvkey.txt.sample prvkey.txt
+nano prvkey.txt
+```
+**Edit rtoken.txt and input Refresh token from instruction below**
+```bash
+cp prvkey.txt.sample prvkey.txt
+nano prvkey.txt
 ```
 run the script
 ```bash
-python3 main.py
+python main.py
 ```
-**choose 1 to do transactions**
-## Run grow and open garden boxes
 
-**First You Need To Get Your Refresh Token**
+**choose 1 to do transactions**
+or use shortcut command (change 1000 to amount of tx you need)
+```bash
+python main.py -a 1 -tx 1000
+```
+
+**choose 2 to run grow and open garden boxes**
+or use shortcut command
+```bash
+python main.py -a 2
+```
+
+**How To Get Your Refresh Token**
 - Open Hana Dashboard : https://hanafuda.hana.network/dashboard
 - Click F12 to open console
 - Find Application and choose session storage
 - Select hana and copy your refreshToken
 ![image](image-2.png)
+- Copy token.txt.sample to token.txt 
 - Edit token.txt paste your refresh token
-
-run the script
-```bash
-python3 main.py -a 2
-```
 
 ## Optinally you can use pm2 to run script in the background
 You can use pm2 to run your script in the background, allowing it to continue running even after you close your terminal.
@@ -62,11 +74,11 @@ npm install -g pm2
 ### Starting the Script with pm2
 To run the script to execute 1000 transactions:
 ```bash
-pm2 start main.py --name "hana-tx" --interpreter python3 -- -a 1 -tx 1000
+pm2 start main.py --name "hana-tx" --interpreter python -- -a 1 -tx 1000
 ```
 To run the grow and garden actions:
 ```bash
-pm2 start main.py --name "hana-grow" --interpreter python3 -- -a 2
+pm2 start main.py --name "hana-grow" --interpreter python -- -a 2
 ```
 ## Managing pm2 Processes
 You can manage your pm2 processes with the following commands:

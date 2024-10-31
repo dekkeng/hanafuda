@@ -1,0 +1,177 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[co]
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+#.py,cover
+.hypothes.is/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into the executable.
+*.manifest
+*.spec
+
+# Installer discards
+dist/
+build/
+
+# Licenses
+LICENCE
+LICENSE
+
+# PyCharm stuff:
+*.iml
+*.ipynb
+
+# Jupyter Notebook:
+*.ipynb
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if different people have different dependencies installed in
+#   their virtual environments, pipenv may install dependencies that already exist, causing confusion.
+#   Therefore, it is recommended to add Pipfile.lock to .gitignore.
+#   However, if you are the sole developer and there is no collaboration, it is better to not include
+#   Pipfile.lock in .gitignore.
+Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/py_oops
+__pypackages__/
+
+# Celery stuff:
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+pyvenv.cfg
+
+# Spyder project settings
+.spyderproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site/
+
+# mypy
+.mypy_cache/
+
+# debug
+nosetests.xml
+*.py[od]
+
+# IntelliJ files
+*.iml
+*.ipynb
+
+# pycharm
+#  .idea/ is roughly the equivalent of .vscode/ for VSCode
+#  This directory stores the user's preferences in a JSON format
+#  See https://www.jetbrains.com/help/pycharm/directories-used-by-the-ide.html for more info
+.idea/
+
+# VSCode
+.vscode/
+# End of https://www.toptal.com/developers/gitignore/api/python
+
+# Other
+.hypothes.is/
+.pytest_cache/
+__pypackages__/
+dist/
+build/
+tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.mo
+*.pot
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+instance/
+.webassets-cache
+.scrapy
+docs/_build/
+*.manifest
+*.spec
+*.ipynb
+*.iml
+*.ipynb
+.python-version
+Pipfile.lock
+__pypackages__/
+celerybeat-schedule
+celerybeat.pid
+*.sage.py
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+pyvenv.cfg
+.spyderproject
+.ropeproject
+/site/
+.mypy_cache/
+nosetests.xml
+*.py[od]
+.idea/
+.vscode/
+
+prvkey.txt
+rtoken.txt

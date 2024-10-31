@@ -1,32 +1,21 @@
 import asyncio
 import json
 import time
-from colorama import init, Fore, Style
 from web3 import Web3
 import aiohttp
 import argparse
-
-init(autoreset=True)
-
-print(Fore.CYAN + Style.BRIGHT + """███████╗██╗     ██╗  ██╗     ██████╗██╗   ██╗██████╗ ███████╗██████╗ """ + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """╚══███╔╝██║     ██║ ██╔╝    ██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗""" + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """  ███╔╝ ██║     █████╔╝     ██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝""" + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """ ███╔╝  ██║     ██╔═██╗     ██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗""" + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """███████╗███████╗██║  ██╗    ╚██████╗   ██║   ██████╔╝███████╗██║  ██║""" + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """╚══════╝╚══════╝╚═╝  ╚═╝     ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝""" + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """    Auto Deposit ETH for HANA Network / Auto Grow and Open Garden    """ + Style.RESET_ALL)
-print(Fore.CYAN + Style.BRIGHT + """                t.me/zlkcyber *** github.com/zlkcyber                """ + Style.RESET_ALL)
 
 RPC_URL = "https://mainnet.base.org"
 CONTRACT_ADDRESS = "0xC5bf05cD32a14BFfb705Fb37a9d218895187376c"
 api_url = "https://hanafuda-backend-app-520478841386.us-central1.run.app/graphql"
 AMOUNT_ETH = 0.0000000001  # Amount of ETH to be deposited
+GROW_INTERVAL=600 # Amount of seconds to run grow again
 web3 = Web3(Web3.HTTPProvider(RPC_URL))
 
-with open("pvkey.txt", "r") as file:
+with open("prvkey.txt", "r") as file:
     private_keys = [line.strip() for line in file if line.strip()]
 
-with open("token.txt", "r") as file:
+with open("rtoken.txt", "r") as file:
     access_tokens = [line.strip() for line in file if line.strip()]
 
 contract_abi = '''
@@ -60,7 +49,7 @@ async def colay(session, url, method, payload_data=None):
         return await response.json()
 
 async def refresh_access_token(session, refresh_token):
-    api_key = "AIzaSyDipzN0VRfTPnMGhQ5PSzO27Cxm3DohJGY"  
+    api_key = "AIzaSyCC8e8q8StOo6FyHaOigaNFrHyEOQyNHY0"  
     async with session.post(
         f'https://securetoken.googleapis.com/v1/token?key={api_key}',
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -92,7 +81,7 @@ async def handle_grow_and_garden(session, refresh_token):
     
     grow = profile['data']['getGardenForCurrentUser']['gardenStatus']['growActionCount']
     garden = profile['data']['getGardenForCurrentUser']['gardenStatus']['gardenRewardActionCount']
-    print(f"{Fore.GREEN}POINTS: {balance} | Deposit Counts: {deposit} | Grow left: {grow} | Garden left: {garden}{Style.RESET_ALL}")
+    print(f"POINTS: {balance} | Deposit Counts: {deposit} | Grow left: {grow} | Garden left: {garden}")
 
     while grow > 0:
         action_query = {
@@ -103,7 +92,7 @@ async def handle_grow_and_garden(session, refresh_token):
         reward = mine['data']['issueGrowAction']
         balance += reward
         grow -= 1
-        print(f"{Fore.GREEN}Rewards: {reward} | Balance: {balance} | Grow left: {grow}{Style.RESET_ALL}")
+        print(f"Rewards: {reward} | Balance: {balance} | Grow left: {grow}")
         await asyncio.sleep(1)
         
         commit_query = {
@@ -121,7 +110,7 @@ async def handle_grow_and_garden(session, refresh_token):
         }
         mine_garden = await colay(session, api_url, 'POST', garden_action_query)
         card_ids = [item['data']['cardId'] for item in mine_garden['data']['executeGardenRewardAction']]
-        print(f"{Fore.GREEN}Opened Garden: {card_ids}{Style.RESET_ALL}")
+        print(f"Opened Garden: {card_ids}")
         garden -= 10
         
 
@@ -143,32 +132,32 @@ async def handle_eth_transactions(session, num_transactions):
 
                 signed_txn = web3.eth.account.sign_transaction(transaction, private_key=private_key)
                 tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-                print(f"{Fore.GREEN}Transaction {i + 1} sent from {short_from_address} with hash: {tx_hash.hex()}{Style.RESET_ALL}")
+                print(f"Transaction {i + 1} sent from {short_from_address} with hash: {tx_hash.hex()}")
 
                 nonces[private_key] += 1
                 await asyncio.sleep(1)  
 
             except Exception as e:
                 if 'nonce too low' in str(e):
-                    print(f"{Fore.RED}Nonce too low for {short_from_address}. Fetching the latest nonce...{Style.RESET_ALL}")
+                    print(f"Nonce too low for {short_from_address}. Fetching the latest nonce...")
                     nonces[private_key] = web3.eth.get_transaction_count(from_address)
                 else:
-                    print(f"{Fore.RED}Error sending transaction from {short_from_address}: {str(e)}{Style.RESET_ALL}")
+                    print(f"Error sending transaction from {short_from_address}: {str(e)}")
 
 async def main(mode, num_transactions=None):
     async with aiohttp.ClientSession() as session:
         if mode == '1':
             if num_transactions is None:
-                num_transactions = int(input(Fore.YELLOW + "Enter the number of transactions to be executed: " + Style.RESET_ALL))
+                num_transactions = int(input("Enter the number of transactions to be executed: "))
             await handle_eth_transactions(session, num_transactions)
         elif mode == '2':
             while True:  
                 for refresh_token in access_tokens:
                     await handle_grow_and_garden(session, refresh_token)  
-                print(f"{Fore.RED}All accounts have been processed. Cooling down for 10 minutes...{Style.RESET_ALL}")
-                time.sleep(600)  
+                print(f"All accounts have been processed. Cooling down for 10 minutes...")
+                time.sleep(GROW_INTERVAL)  
         else:
-            print(Fore.RED + "Invalid option. Please choose either 1 or 2." + Style.RESET_ALL)
+            print("Invalid option. Please choose either 1 or 2.")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Choose the mode of operation.')
@@ -178,9 +167,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.action is None:
-        args.action = input(Fore.YELLOW + "Choose action (1: Execute Transactions, 2: Grow and Garden): " + Style.RESET_ALL)
+        args.action = input("Choose action (1: Execute Transactions, 2: Grow and Garden): ")
         while args.action not in ['1', '2']:
-            print(Fore.RED + "Invalid choice. Please select either 1 or 2." + Style.RESET_ALL)
-            args.action = input(Fore.YELLOW + "Choose action (1: Execute Transactions, 2: Grow and Garden): " + Style.RESET_ALL)
+            print("Invalid choice. Please select either 1 or 2.")
+            args.action = input("Choose action (1: Execute Transactions, 2: Grow and Garden): ")
    
     asyncio.run(main(args.action, args.transactions))
