@@ -60,49 +60,69 @@ async def refresh_access_token(session, refresh_token):
         data = await response.json()
         return data.get('access_token')
 
+
 async def handle_grow_and_garden(session, refresh_token):  
     new_access_token = await refresh_access_token(session, refresh_token)
     headers['authorization'] = f'Bearer {new_access_token}'
 
     info_query = {
-        "query": "query CurrentUser { currentUser { id sub name iconPath depositCount totalPoint evmAddress { userId address } inviter { id name } } }",
-        "operationName": "CurrentUser"
+        "query": "query getCurrentUser { "
+                  "currentUser { id totalPoint depositCount } "
+                  "getGardenForCurrentUser { "
+                  "gardenStatus { growActionCount gardenRewardActionCount } "
+                  "} "
+                  "}",
+        "operationName": "getCurrentUser"
     }
     info = await colay(session, api_url, 'POST', info_query)
     
     balance = info['data']['currentUser']['totalPoint']
     deposit = info['data']['currentUser']['depositCount']
+    grow = info['data']['getGardenForCurrentUser']['gardenStatus']['growActionCount']
+    garden = info['data']['getGardenForCurrentUser']['gardenStatus']['gardenRewardActionCount']
 
-    bet_query = {
-        "query": "query GetGardenForCurrentUser { getGardenForCurrentUser { id inviteCode gardenDepositCount gardenStatus { id activeEpoch growActionCount gardenRewardActionCount } gardenMilestoneRewardInfo { id gardenDepositCountWhenLastCalculated lastAcquiredAt createdAt } gardenMembers { id sub name iconPath depositCount } } }",
-        "operationName": "GetGardenForCurrentUser"
-    }
-    profile = await colay(session, api_url, 'POST', bet_query)
-    
-    grow = profile['data']['getGardenForCurrentUser']['gardenStatus']['growActionCount']
-    garden = profile['data']['getGardenForCurrentUser']['gardenStatus']['gardenRewardActionCount']
     print(f"POINTS: {balance} | Deposit Counts: {deposit} | Grow left: {grow} | Garden left: {garden}")
 
-    while grow > 0:
-        action_query = {
-            "query": "mutation executeGrowAction { baseValue leveragedValue totalValue multiplyRate }",
-            "operationName": "ExecuteGrowAction",
-            "variables": "{withAll: true}"
-        }
-        mine = await colay(session, api_url, 'POST', action_query)
-        reward = mine['data']['executeGrowAction']
-        balance += reward['totalValue']
-        grow -= 1
-        print(f"Rewards: {reward['totalValue']} | Balance: {balance} | Grow left: {grow}")
-        await asyncio.sleep(1)
-        
-        commit_query = {
-            "query": "mutation commitGrowAction { commitGrowAction }",
-            "operationName": "commitGrowAction"
-        }
-        await colay(session, api_url, 'POST', commit_query)
-        
+    async def grow_action():
+        grow_action_query = {
+              "query": """
+                  mutation executeGrowAction {
+                      executeGrowAction(withAll: true) {
+                          totalValue
+                          multiplyRate
+                      }
+                      executeSnsShare(actionType: GROW, snsType: X) {
+                          bonus
+                      }
+                  }
+              """,
+              "operationName": "executeGrowAction"
+          }
 
+                        
+        try:
+            mine = await colay(session, api_url, 'POST', grow_action_query)            
+            
+            if mine and 'data' in mine and 'executeGrowAction' in mine['data']:
+                reward = mine['data']['executeGrowAction']['totalValue']
+                return reward
+            else:
+                print(f"Error: Unexpected response format: {mine}")
+                return 0  
+        except Exception as e:
+            #print(f"{Fore.RED}Error during grow action: {str(e)}{Style.RESET_ALL}")
+            return 0
+
+    if grow > 0:
+        
+        reward = await grow_action()
+
+        if reward:            
+            balance += reward
+            grow = 0
+            print(f"Rewards: {reward} | Balance: {balance} | Grow left: {grow}")
+              
+        
     while garden >= 10:
         garden_action_query = {
             "query": "mutation executeGardenRewardAction($limit: Int!) { executeGardenRewardAction(limit: $limit) { data { cardId group } isNew } }",
@@ -111,9 +131,9 @@ async def handle_grow_and_garden(session, refresh_token):
         }
         mine_garden = await colay(session, api_url, 'POST', garden_action_query)
         card_ids = [item['data']['cardId'] for item in mine_garden['data']['executeGardenRewardAction']]
-        print(f"Opened Garden: {card_ids}")
+        print(f"{Fore.GREEN}Opened Garden: {card_ids}{Style.RESET_ALL}")
         garden -= 10
-        
+
 
 async def handle_eth_transactions(session, num_transactions):
     global nonces
