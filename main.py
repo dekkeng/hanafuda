@@ -110,7 +110,6 @@ async def handle_grow_and_garden(session, refresh_token):
                 print(f"Error: Unexpected response format: {mine}")
                 return 0  
         except Exception as e:
-            #print(f"{Fore.RED}Error during grow action: {str(e)}{Style.RESET_ALL}")
             return 0
 
     if grow > 0:
@@ -131,7 +130,7 @@ async def handle_grow_and_garden(session, refresh_token):
         }
         mine_garden = await colay(session, api_url, 'POST', garden_action_query)
         card_ids = [item['data']['cardId'] for item in mine_garden['data']['executeGardenRewardAction']]
-        print(f"{Fore.GREEN}Opened Garden: {card_ids}{Style.RESET_ALL}")
+        print(f"Opened Garden: {card_ids}")
         garden -= 10
 
 
