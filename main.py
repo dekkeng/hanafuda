@@ -85,14 +85,15 @@ async def handle_grow_and_garden(session, refresh_token):
 
     while grow > 0:
         action_query = {
-            "query": "mutation issueGrowAction { issueGrowAction }",
-            "operationName": "issueGrowAction"
+            "query": "mutation executeGrowAction { baseValue leveragedValue totalValue multiplyRate }",
+            "operationName": "ExecuteGrowAction",
+            "variables": "{withAll: true}"
         }
         mine = await colay(session, api_url, 'POST', action_query)
-        reward = mine['data']['issueGrowAction']
-        balance += reward
+        reward = mine['data']['executeGrowAction']
+        balance += reward['totalValue']
         grow -= 1
-        print(f"Rewards: {reward} | Balance: {balance} | Grow left: {grow}")
+        print(f"Rewards: {reward['totalValue']} | Balance: {balance} | Grow left: {grow}")
         await asyncio.sleep(1)
         
         commit_query = {
